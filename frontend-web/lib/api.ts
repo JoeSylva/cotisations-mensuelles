@@ -43,6 +43,7 @@ export type CreateMembreData = {
 export const membresAPI = {
   getAll: () => fetchAPI<Membre[]>("/membres"),
   getOne: (id: number) => fetchAPI<Membre>(`/membres/${id}`),
+  getMe: () => fetchAPI<Membre>("/me"),
   create: (data: CreateMembreData) =>
     fetchAPI<Membre>("/membres", { method: "POST", body: JSON.stringify(data) }),
   update: (id: number, data: Partial<Membre>) =>
@@ -82,8 +83,14 @@ export const typeOperationsAPI = {
 
 // API Cotisations
 export const cotisationsAPI = {
-  getSuivi: (params?: URLSearchParams) =>
-    fetchAPI<SuiviCotisation>(
-      `/cotisations${params ? `?${params}` : ""}`
-    ),
+  getSuivi: (params?: { debut?: string; fin?: string }) => {
+    let query = "";
+    if (params && (params.debut || params.fin)) {
+      const searchParams = new URLSearchParams();
+      if (params.debut) searchParams.append("debut", params.debut);
+      if (params.fin) searchParams.append("fin", params.fin);
+      query = `?${searchParams.toString()}`;
+    }
+    return fetchAPI<SuiviCotisation>(`/cotisations${query}`);
+  },
 };

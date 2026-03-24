@@ -1,57 +1,82 @@
-"use client"
-
-import { useState } from "react"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
+// components/month-multi-select.tsx
+import { useState, useEffect, useRef } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { format } from "date-fns"; // ou votre propre fonction
 
 interface MonthMultiSelectProps {
-  value: string[]
-  onChange: (months: string[]) => void
-  disabled?: boolean
+  value: string[]; // mois sélectionnés au format "YYYY-MM"
+  onChange: (months: string[]) => void;
+  startMonth?: string; // mois de début pour le scroll et la génération
+  monthsRange?: number; // nombre total de mois à afficher (par défaut 48)
 }
 
-// Génère les 12 derniers mois (format YYYY-MM)
-const generateMonths = (): string[] => {
-  const months = []
-  const today = new Date()
-  for (let i = 11; i >= 0; i--) {
-    const d = new Date(today.getFullYear(), today.getMonth() - i, 1)
-    const year = d.getFullYear()
-    const month = String(d.getMonth() + 1).padStart(2, '0')
-    months.push(`${year}-${month}`)
-  }
-  return months
-}
+export function MonthMultiSelect({
+  value,
+  onChange,
+  startMonth = new Date().toISOString().slice(0, 7),
+  monthsRange = 48,
+}: MonthMultiSelectProps) {
+  const [months, setMonths] = useState<string[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const startMonthRef = useRef<HTMLDivElement>(null);
 
-export function MonthMultiSelect({ value, onChange, disabled }: MonthMultiSelectProps) {
-  const availableMonths = generateMonths()
+  // Générer une liste de mois centrée autour du startMonth
+  useEffect(() => {
+    const startDate = new Date(startMonth + "-01");
+    const halfRange = Math.floor(monthsRange / 2);
+    const firstMonth = new Date(startDate);
+    firstMonth.setMonth(startDate.getMonth() - halfRange);
 
-  const toggleMonth = (month: string) => {
-    if (value.includes(month)) {
-      onChange(value.filter(m => m !== month))
-    } else {
-      onChange([...value, month])
+    const generatedMonths: string[] = [];
+    for (let i = 0; i < monthsRange; i++) {
+      const date = new Date(firstMonth);
+      date.setMonth(firstMonth.getMonth() + i);
+      const yearMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+      generatedMonths.push(yearMonth);
     }
-  }
+    setMonths(generatedMonths);
+  }, [startMonth, monthsRange]);
+
+  // Scroll jusqu'au mois de début
+  useEffect(() => {
+    if (startMonthRef.current) {
+      startMonthRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [months]);
+
+  const handleCheck = (month: string, checked: boolean) => {
+    if (checked) {
+      onChange([...value, month]);
+    } else {
+      onChange(value.filter((m) => m !== month));
+    }
+  };
 
   return (
     <div className="space-y-2">
       <Label>Mois concernés</Label>
-      <div className="grid grid-cols-3 gap-2">
-        {availableMonths.map(month => (
-          <div key={month} className="flex items-center space-x-2">
-            <Checkbox
-              id={month}
-              checked={value.includes(month)}
-              onCheckedChange={() => toggleMonth(month)}
-              disabled={disabled}
-            />
-            <label htmlFor={month} className="text-sm cursor-pointer">
-              {month}
-            </label>
-          </div>
-        ))}
-      </div>
+      <ScrollArea className="h-64 rounded-md border p-2">
+        <div className="space-y-2">
+          {months.map((month) => (
+            <div
+              key={month}
+              ref={month === startMonth ? startMonthRef : null}
+              className="flex items-center space-x-2"
+            >
+              <Checkbox
+                id={month}
+                checked={value.includes(month)}
+                onCheckedChange={(checked) => handleCheck(month, checked === true)}
+              />
+              <Label htmlFor={month} className="cursor-pointer">
+                {format(new Date(month + "-01"), "MMMM yyyy")}
+              </Label>
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
     </div>
-  )
+  );
 }

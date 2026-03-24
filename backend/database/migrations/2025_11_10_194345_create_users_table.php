@@ -11,9 +11,9 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique()->default(DB::raw('gen_random_uuid()'));
-            $table->string('nom', 100);
-            $table->string('prenom', 100);
-            $table->string('email')->unique();
+            $table->string('nom', 100)->nullable();
+            $table->string('prenom', 100)->nullable();
+            $table->string('email')->unique()->nullable();
             $table->string('telephone', 20)->nullable();
             $table->enum('role', ['admin', 'tresorier', 'membre'])->default('membre');
             $table->string('password');

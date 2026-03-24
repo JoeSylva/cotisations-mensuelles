@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button"
 import { LayoutDashboard, Users, DollarSign, BarChart3, Settings, LogOut, Menu, X, AlertCircle, ChevronDown, Calendar } from "lucide-react"
 import { useState } from "react"
 import { useAuth } from "@/hooks/use-auth"
+import Image from "next/image"
 
 const allNavItems = [
   { href: "/members", label: "Membres", icon: Users, permission: "canManageMembers" },
   { href: "/operations", label: "Opérations", icon: DollarSign, permission: "canManageOperations" },
   { href: "/type-operations", label: "Types d'opérations", icon: AlertCircle, permission: "canManageTypeOperations" },
-  { href: "/cotisations", label: "Cotisations", icon: Calendar, permission: "canViewCotisations" }, // Nouveau
+  { href: "/cotisations", label: "Cotisations", icon: Calendar, permission: "canViewCotisations" },
   { href: "/reports", label: "Rapports", icon: BarChart3, permission: "canViewReports" },
   { href: "/settings", label: "Paramètres", icon: Settings, permission: "canAccessSettings" },
 ]
@@ -47,19 +48,27 @@ export function Sidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 h-screen w-64 bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-transform duration-300 z-30 lg:translate-x-0 ${
+        className={`fixed left-0 top-0 h-screen w-64 bg-purple-600 text-white border-r border-purple-700 transition-transform duration-300 z-30 lg:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="p-6 border-b border-sidebar-border">
+        <div className="p-6 border-b border-purple-700">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-sidebar-primary text-sidebar-primary-foreground flex items-center justify-center font-bold">
-              G
+            <div className="flex items-center gap-2">
+              <div className="w-24 h-24 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
+                <Image
+                  src="/rakotomalala_logo.png"
+                  alt="Logo Rakotomalala"
+                  width={80}
+                  height={80}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+              <span className="font-bold text-lg text-white">GestTresoRT</span>
             </div>
-            <span className="font-bold text-lg">GestTresoRT</span>
           </Link>
           {user && (
-            <p className="text-xs text-sidebar-foreground/60 mt-2">
+            <p className="text-xs text-white/60 mt-2">
               {user.prenom} {user.nom} • {user.role}
             </p>
           )}
@@ -70,15 +79,15 @@ export function Sidebar() {
           <div>
             <Button
               variant="ghost"
-              className={`w-full justify-start gap-3 ${
+              className={`w-full justify-start gap-3 text-white hover:bg-white/10 hover:text-white ${
                 isDashboardActive
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                  : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  ? "bg-white/20 text-white"
+                  : ""
               }`}
               onClick={() => setDashboardOpen(!dashboardOpen)}
             >
-              <LayoutDashboard className="w-4 h-4" />
-              <span className="flex-1 text-left">Tableau de bord</span>
+              <LayoutDashboard className="w-4 h-4 text-white" />
+              <span className="flex-1 text-left text-white">Tableau de bord</span>
               <ChevronDown className={`w-4 h-4 transition-transform ${dashboardOpen ? 'rotate-180' : ''}`} />
             </Button>
             {dashboardOpen && (
@@ -87,8 +96,8 @@ export function Sidebar() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={`w-full justify-start text-sm ${
-                      pathname === "/dashboard/admin" ? "bg-sidebar-primary/20 text-sidebar-primary" : ""
+                    className={`w-full justify-start text-sm text-white hover:bg-white/10 ${
+                      pathname === "/dashboard/admin" ? "bg-white/20 text-white" : ""
                     }`}
                   >
                     Vue Admin
@@ -98,8 +107,8 @@ export function Sidebar() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={`w-full justify-start text-sm ${
-                      pathname === "/dashboard/tresorier" ? "bg-sidebar-primary/20 text-sidebar-primary" : ""
+                    className={`w-full justify-start text-sm text-white hover:bg-white/10 ${
+                      pathname === "/dashboard/tresorier" ? "bg-white/20 text-white" : ""
                     }`}
                   >
                     Vue Trésorier
@@ -109,8 +118,8 @@ export function Sidebar() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={`w-full justify-start text-sm ${
-                      pathname === "/dashboard/member" ? "bg-sidebar-primary/20 text-sidebar-primary" : ""
+                    className={`w-full justify-start text-sm text-white hover:bg-white/10 ${
+                      pathname === "/dashboard/member" ? "bg-white/20 text-white" : ""
                     }`}
                   >
                     Vue Membre
@@ -127,11 +136,9 @@ export function Sidebar() {
             return (
               <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
                 <Button
-                  variant={isActive ? "default" : "ghost"}
-                  className={`w-full justify-start gap-3 ${
-                    isActive
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                      : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  variant="ghost"
+                  className={`w-full justify-start gap-3 text-white hover:bg-white/10 ${
+                    isActive ? "bg-white/20 text-white" : ""
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -146,7 +153,7 @@ export function Sidebar() {
           <Button
             onClick={handleLogout}
             variant="ghost"
-            className="w-full justify-start gap-3 text-destructive hover:bg-destructive/10"
+            className="w-full justify-start gap-3 text-red-200 hover:bg-red-500/20 hover:text-red-100"
           >
             <LogOut className="w-4 h-4" />
             Déconnexion

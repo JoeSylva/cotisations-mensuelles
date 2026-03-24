@@ -48,6 +48,7 @@ export interface Operation {
   montant: number
   date_operation: string
   mois_cotisation?: string
+  mois_cotisations?: string[]
   description?: string
   mode_paiement: "espece" | "mobile_money"
   reference_paiement?: string
@@ -56,6 +57,7 @@ export interface Operation {
   created_at: string
   updated_at: string
   membre?: Membre
+  user?: User
   type_operation?: TypeOperation
   created_by_user?: User
 }
@@ -79,6 +81,9 @@ export interface SuiviMembre {
   prenom: string;
   email: string;
   date_adhesion: string;
+  statut: "actif" | "inactif";
+  situation_matrimoniale: string;
+  user?: User;
   cotisations: Record<string, number | null>;
 }
 

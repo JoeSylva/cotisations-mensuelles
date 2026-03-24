@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+
 class MembreController extends Controller
 {
     public function index()
@@ -21,35 +22,51 @@ class MembreController extends Controller
         return response()->json($membres);
     }
 
+    // app/Http/Controllers/Api/MembreController.php
+
     public function store(Request $request)
     {
-        $request->validate([
-            'nom' => 'required|string|max:100',
-            'prenom' => 'required|string|max:100',
-            'email' => 'required|email|unique:users',
+        // Convertir les chaînes vides en null pour nom, prenom, telephone, etc.
+        $data = $request->all();
+        foreach (['nom', 'prenom', 'telephone', 'email', 'adresse', 'profession'] as $field) {
+            if (isset($data[$field]) && $data[$field] === '') {
+                $data[$field] = null;
+            }
+        }
+
+        $validator = validator($data, [
+            'nom' => 'nullable|string|max:100',
+            'prenom' => 'nullable|string|max:100',
+            'email' => 'nullable|email|unique:users',
             'telephone' => 'nullable|string|max:20',
             'date_naissance' => 'nullable|date',
+            'situation_matrimoniale' => 'required|string|in:célibataire,marié,divorcé,veuf',
             'adresse' => 'nullable|string',
             'profession' => 'nullable|string|max:100',
         ]);
 
-        return DB::transaction(function () use ($request) {
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        return DB::transaction(function () use ($data) {
             $user = User::create([
-                'nom' => $request->nom,
-                'prenom' => $request->prenom,
-                'email' => $request->email,
-                'telephone' => $request->telephone,
-                'password' => Hash::make('password123'), // Mot de passe temporaire
+                'nom' => $data['nom'],
+                'prenom' => $data['prenom'],
+                'email' => $data['email'],
+                'telephone' => $data['telephone'],
+                'password' => Hash::make('password123'),
                 'role' => 'membre',
             ]);
 
             $membre = $user->membre()->create([
-                'nom' => $request->nom,               
-                'prenom' => $request->prenom,         
-                'telephone' => $request->telephone,
-                'date_naissance' => $request->date_naissance,
-                'adresse' => $request->adresse,
-                'profession' => $request->profession,
+                'nom' => $data['nom'],
+                'prenom' => $data['prenom'],
+                'telephone' => $data['telephone'],
+                'date_naissance' => $data['date_naissance'],
+                'situation_matrimoniale' => $data['situation_matrimoniale'],
+                'adresse' => $data['adresse'],
+                'profession' => $data['profession'],
                 'date_adhesion' => now(),
                 'statut' => 'actif',
             ]);
@@ -65,20 +82,32 @@ class MembreController extends Controller
 
     public function update(Request $request, Membre $membre)
     {
-        $request->validate([
-            'nom' => 'sometimes|string|max:100',
-            'prenom' => 'sometimes|string|max:100',
+        $data = $request->all();
+        foreach (['nom', 'prenom', 'telephone', 'email', 'adresse', 'profession'] as $field) {
+            if (isset($data[$field]) && $data[$field] === '') {
+                $data[$field] = null;
+            }
+        }
+
+        $validator = validator($data, [
+            'nom' => 'nullable|string|max:100',
+            'prenom' => 'nullable|string|max:100',
             'email' => 'sometimes|email|unique:users,email,' . $membre->user_id,
             'telephone' => 'nullable|string|max:20',
             'date_naissance' => 'nullable|date',
+            'situation_matrimoniale' => 'sometimes|string|in:célibataire,marié,divorcé,veuf',
             'adresse' => 'nullable|string',
             'profession' => 'nullable|string|max:100',
             'statut' => 'sometimes|in:actif,inactif,suspendu',
         ]);
 
-        return DB::transaction(function () use ($request, $membre) {
-            $membre->user->update($request->only(['nom', 'prenom', 'email', 'telephone']));
-            $membre->update($request->only(['date_naissance', 'adresse', 'profession', 'statut']));
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        return DB::transaction(function () use ($data, $membre) {
+            $membre->user->update($data);
+            $membre->update($data);
 
             return response()->json($membre->load('user'));
         });
@@ -89,4 +118,16 @@ class MembreController extends Controller
         $membre->user->delete(); // Cascade supprime aussi le membre
         return response()->json(null, 204);
     }
+
+    public function me(Request $request)
+{
+    $user = $request->user();
+    $membre = Membre::where('user_id', $user->id)->with('user')->first();
+
+    if (!$membre) {
+        return response()->json(['message' => 'Membre non trouvé'], 404);
+    }
+
+    return response()->json($membre);
+}
 }

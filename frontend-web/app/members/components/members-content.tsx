@@ -17,7 +17,7 @@ export default function MembersContent() {
   const router = useRouter()
 
   const filteredMembres = membres.filter((m) =>
-    `${m.prenom} ${m.nom} ${m.user?.email}`
+    `${m.prenom} ${m.nom} ${m.user?.email} ${m.telephone} ${m.date_naissance} ${m.adresse} ${m.profession} ${m.situation_matrimoniale}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
   )
@@ -39,7 +39,7 @@ export default function MembersContent() {
     <div className="flex h-screen bg-background">
       <Sidebar />
 
-      <main className="flex-1 overflow-auto lg:ml-64">
+      <main className="flex-1 overflow-auto bg-purple-100 lg:ml-64">
         <div className="p-6 lg:p-8">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
@@ -48,7 +48,7 @@ export default function MembersContent() {
               <p className="text-muted-foreground mt-1">Gérez tous les membres de votre association</p>
             </div>
             <Link href="/members/new">
-              <Button className="gap-2 bg-primary hover:bg-primary/90">
+              <Button className="gap-2 bg-green-500 hover:bg-green-600 text-white">
                 <Plus className="w-4 h-4" />
                 Nouveau Membre
               </Button>
@@ -56,7 +56,7 @@ export default function MembersContent() {
           </div>
 
           {/* Search Bar */}
-          <div className="mb-6">
+          <div className="mb-6 bg-white rounded-md">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -72,8 +72,8 @@ export default function MembersContent() {
           {/* Members Table */}
           <Card>
             <CardHeader>
-              <CardTitle>Liste des Membres</CardTitle>
-              <CardDescription>Total: {filteredMembres.length} membre(s)</CardDescription>
+              <CardTitle className="text-gray-900 font-bold">Liste des Membres</CardTitle>
+              <CardDescription className="text-purple-600">Total: {filteredMembres.length} membre(s)</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
@@ -81,7 +81,7 @@ export default function MembersContent() {
                   <thead>
                     <tr className="border-b border-border">
                       <th className="text-left p-3 font-semibold">Nom</th>
-                      <th className="text-left p-3 font-semibold">Email</th>
+                      <th className="text-left p-3 font-semibold">Situation matrimoniale</th>
                       <th className="text-left p-3 font-semibold">Téléphone</th>
                       <th className="text-left p-3 font-semibold">Rôle</th>
                       <th className="text-left p-3 font-semibold">Statut</th>
@@ -89,13 +89,13 @@ export default function MembersContent() {
                       <th className="text-left p-3 font-semibold">Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="bg-purple-200">
                     {filteredMembres.map((member) => (
                       <tr key={member.id} className="border-b border-border hover:bg-muted">
                         <td className="p-3 font-medium">
-                          {member.prenom} {member.nom}
+                          {member.user?.prenom} {member.user?.nom}
                         </td>
-                        <td className="p-3 text-muted-foreground">{member.user?.email}</td>
+                        <td className="p-3 text-muted-foreground">{member.situation_matrimoniale}</td>
                         <td className="p-3">{member.user?.telephone}</td>
                         <td className="p-3">
                           <span className="px-2 py-1 rounded-full text-xs bg-primary/10 text-primary">
@@ -113,10 +113,10 @@ export default function MembersContent() {
                         <td className="p-3">
                           <div className="flex gap-2">
                             <Button variant="ghost" size="sm" onClick={() => router.push(`/members/view/${member.id}`)}>
-                              <Eye className="w-4 h-4" />
+                              <Eye className="w-4 h-4 text-green-500" />
                             </Button>
                             <Button variant="ghost" size="sm" onClick={() => router.push(`/members/${member.id}`)}>
-                              <Edit className="w-4 h-4" />
+                              <Edit className="w-4 h-4 text-blue-500" />
                             </Button>
                             <Button variant="ghost" size="sm" className="text-destructive" onClick={() => handleDelete(member.id)}>
                               <Trash2 className="w-4 h-4" />

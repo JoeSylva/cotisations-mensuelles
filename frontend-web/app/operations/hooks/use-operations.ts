@@ -9,6 +9,7 @@ export type CreateOperationData = {
   date_operation: string;
   mode_paiement: Operation['mode_paiement'];
   mois_cotisation?: string;
+  mois_cotisations?: string[];
   description?: string;
   reference_paiement?: string;
   statut?: Operation['statut'];
@@ -24,34 +25,32 @@ export function useOperations(initialFilters?: Record<string, string>) {
 
   const fetchOperations = useCallback(async () => {
     try {
-        setLoading(true);
-        const params = new URLSearchParams(filters);
-        const result = await operationsAPI.getAll(params);
-        
-        // Vérifie si le résultat est un tableau
-        if (Array.isArray(result)) {
+      setLoading(true);
+      const params = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) params.append(key, value);
+      });
+      const result = await operationsAPI.getAll(params);
+      
+      if (Array.isArray(result)) {
         setOperations(result);
-        } 
-        // Sinon, suppose que c'est un objet paginé avec une propriété 'data'
-        else if (result && typeof result === 'object' && 'data' in result && Array.isArray(result.data)) {
+      } else if (result && typeof result === 'object' && 'data' in result && Array.isArray(result.data)) {
         setOperations(result.data);
-        } 
-        else {
+      } else {
         console.error('Format de réponse inattendu:', result);
         setOperations([]);
-        }
-        
-        setError(null);
+      }
+      setError(null);
     } catch (err) {
-        setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-    }, [filters]); // dépend de filters
+  }, [filters]);
 
   useEffect(() => {
     fetchOperations();
-  }, [fetchOperations]); // dépend de fetchOperations, qui est stable grâce à useCallback
+  }, [fetchOperations]);
 
   const createOperation = async (data: CreateOperationData) => {
     try {

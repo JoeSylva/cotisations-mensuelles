@@ -31,45 +31,49 @@ export function TypeOperationForm({ initialData, onSubmit, isLoading }: TypeOper
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{initialData ? "Modifier le type" : "Nouveau type d'opération"}</CardTitle>
-        <CardDescription>
+    <Card className="border-purple-200 shadow-md">
+      <CardHeader className="bg-purple-50 border-b border-purple-200">
+        <CardTitle className="text-purple-800">
+          {initialData ? "Modifier le type" : "Nouveau type d'opération"}
+        </CardTitle>
+        <CardDescription className="text-purple-600">
           {initialData
             ? "Modifiez les informations du type d'opération"
             : "Créez un nouveau type d'opération pour les transactions"}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="nom">Nom *</Label>
+            <Label htmlFor="nom" className="text-purple-700 font-medium">Nom *</Label>
             <Input
               id="nom"
               value={formData.nom}
               onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
+              className="border-purple-200 focus:ring-purple-500"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="text-purple-700 font-medium">Description</Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={3}
+              className="border-purple-200 focus:ring-purple-500"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="categorie">Catégorie *</Label>
+              <Label htmlFor="categorie" className="text-purple-700 font-medium">Catégorie *</Label>
               <Select
                 value={formData.categorie}
                 onValueChange={(value: TypeOperation['categorie']) => setFormData({ ...formData, categorie: value })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-purple-200 focus:ring-purple-500">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -82,12 +86,12 @@ export function TypeOperationForm({ initialData, onSubmit, isLoading }: TypeOper
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="type">Type *</Label>
+              <Label htmlFor="type" className="text-purple-700 font-medium">Type *</Label>
               <Select
                 value={formData.type}
                 onValueChange={(value: TypeOperation['type']) => setFormData({ ...formData, type: value })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-purple-200 focus:ring-purple-500">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -99,10 +103,19 @@ export function TypeOperationForm({ initialData, onSubmit, isLoading }: TypeOper
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button type="submit" disabled={isLoading} className="bg-primary hover:bg-primary/90">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
               {isLoading ? "Enregistrement..." : "Enregistrer"}
             </Button>
-            <Button type="button" variant="outline" onClick={() => window.history.back()}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => window.history.back()}
+              className="border-purple-200 text-purple-700 hover:bg-purple-50"
+            >
               Annuler
             </Button>
           </div>

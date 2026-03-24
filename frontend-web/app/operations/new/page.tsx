@@ -18,32 +18,35 @@ export default function NewOperationPage() {
   const router = useRouter()
 
   const handleSubmit = async (data: Partial<Operation>) => {
-    // Vérifier que tous les champs obligatoires sont présents
-    if (!data.membre_id || !data.type_operation_id || !data.montant || !data.date_operation || !data.mode_paiement) {
-      alert("Veuillez remplir tous les champs obligatoires")
-      return
-    }
+      if (!data.membre_id || !data.type_operation_id || !data.montant || !data.date_operation || !data.mode_paiement) {
+          alert("Veuillez remplir tous les champs obligatoires");
+          return;
+      }
 
-    // Construire un objet de type CreateOperationData
-    const operationData: CreateOperationData = {
-      membre_id: data.membre_id,
-      type_operation_id: data.type_operation_id,
-      montant: data.montant,
-      date_operation: data.date_operation,
-      mode_paiement: data.mode_paiement,
-      mois_cotisation: data.mois_cotisation,
-      description: data.description,
-      reference_paiement: data.reference_paiement,
-      statut: data.statut,
-    }
+      const isCotisation = data.mois_cotisations && data.mois_cotisations.length > 0;
+      const operationData: CreateOperationData = {
+          membre_id: data.membre_id,
+          type_operation_id: data.type_operation_id,
+          montant: data.montant,
+          date_operation: data.date_operation,
+          mode_paiement: data.mode_paiement,
+          description: data.description,
+          reference_paiement: data.reference_paiement,
+          statut: data.statut,
+      };
+      if (isCotisation) {
+          operationData.mois_cotisations = data.mois_cotisations;
+      } else {
+          operationData.mois_cotisation = data.mois_cotisation;
+      }
 
-    try {
-      await createOperation(operationData)
-      router.push("/operations")
-    } catch{
-      alert("Erreur lors de la création de l'opération")
-    }
-  }
+      try {
+          await createOperation(operationData);
+          router.push("/operations");
+      } catch {
+          alert("Erreur lors de la création de l'opération");
+      }
+  };
 
   return (
     <div className="flex h-screen bg-background">
