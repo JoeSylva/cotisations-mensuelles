@@ -71,7 +71,7 @@ export default function TypeOperationsPage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-purple-900">Types d&#39;Opérations</h1>
+              <h1 className="text-3xl font-bold text-blue-900">Types d&#39;Opérations</h1>
               <p className="text-purple-700 mt-1">Gérer les catégories et types de transactions</p>
             </div>
             <Link href="/type-operations/new">
@@ -88,7 +88,7 @@ export default function TypeOperationsPage() {
               placeholder="Rechercher un type d'opération..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="max-w-md border-purple-200 focus:ring-purple-500"
+              className="max-w-md h-12 border-purple-200 bg-white focus:ring-purple-500"
             />
           </div>
 

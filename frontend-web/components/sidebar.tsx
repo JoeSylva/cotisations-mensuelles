@@ -22,11 +22,12 @@ export function Sidebar() {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [dashboardOpen, setDashboardOpen] = useState(true)
-  const { logout, permissions, user } = useAuth()
+  const { logout, permissions, user, loading } = useAuth()
 
+  // Filtrage des éléments selon les permissions (ne sera utilisé que lorsque user existe)
   const navItems = allNavItems.filter((item) => {
     const permission = item.permission as keyof typeof permissions
-    return permissions?.[permission] || false
+    return permissions[permission] === true
   })
 
   const handleLogout = async () => {
@@ -36,9 +37,20 @@ export function Sidebar() {
 
   const isDashboardActive = pathname.startsWith("/dashboard")
 
+  // Placeholder pendant le chargement ou avant que l'utilisateur ne soit connu
+  // Le serveur et le client initial (avant hydratation) afficheront la même chose
+  const showPlaceholders = !user
+
+  if (loading && !user) {
+    // Affichage minimal pendant le chargement (optionnel)
+    return (
+      <div className="fixed left-0 top-0 h-screen w-64 bg-blue-900 text-white border-r border-blue-700" />
+    )
+  }
+
   return (
     <>
-      {/* Mobile Toggle */}
+      {/* Mobile toggle button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed top-4 left-4 z-40 lg:hidden bg-primary text-primary-foreground p-2 rounded-lg"
@@ -46,12 +58,13 @@ export function Sidebar() {
         {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
 
-      {/* Sidebar */}
+      {/* Sidebar panel */}
       <aside
-        className={`fixed left-0 top-0 h-screen w-64 bg-purple-600 text-white border-r border-purple-700 transition-transform duration-300 z-30 lg:translate-x-0 ${
+        className={`fixed left-0 top-0 h-screen w-64 bg-blue-900 text-white border-r border-blue-700 transition-transform duration-300 z-30 lg:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
+        {/* Logo et info utilisateur */}
         <div className="p-6 border-b border-purple-700">
           <Link href="/dashboard" className="flex items-center gap-2">
             <div className="flex items-center gap-2">
@@ -74,21 +87,20 @@ export function Sidebar() {
           )}
         </div>
 
+        {/* Navigation */}
         <nav className="p-4 space-y-2">
-          {/* Dashboard avec sous-menu */}
+          {/* Dashboard dropdown (toujours présent) */}
           <div>
             <Button
               variant="ghost"
               className={`w-full justify-start gap-3 text-white hover:bg-white/10 hover:text-white ${
-                isDashboardActive
-                  ? "bg-white/20 text-white"
-                  : ""
+                isDashboardActive ? "bg-white/20 text-white" : ""
               }`}
               onClick={() => setDashboardOpen(!dashboardOpen)}
             >
               <LayoutDashboard className="w-4 h-4 text-white" />
               <span className="flex-1 text-left text-white">Tableau de bord</span>
-              <ChevronDown className={`w-4 h-4 transition-transform ${dashboardOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-4 h-4 transition-transform ${dashboardOpen ? "rotate-180" : ""}`} />
             </Button>
             {dashboardOpen && (
               <div className="ml-6 mt-1 space-y-1">
@@ -129,31 +141,39 @@ export function Sidebar() {
             )}
           </div>
 
-          {/* Autres éléments de navigation */}
-          {navItems.map((item) => {
-            const Icon = item.icon
-            const isActive = pathname.startsWith(item.href)
-            return (
-              <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
-                <Button
-                  variant="ghost"
-                  className={`w-full justify-start gap-3 text-white hover:bg-white/10 ${
-                    isActive ? "bg-white/20 text-white" : ""
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {item.label}
-                </Button>
-              </Link>
-            )
-          })}
+          {/* Menu principal : placeholders ou vrai menu */}
+          {showPlaceholders ? (
+            // Placeholders avec le même nombre d’éléments que allNavItems (structure identique)
+            allNavItems.map((item) => (
+              <div key={item.href} className="w-full h-9 animate-pulse bg-white/10 rounded" />
+            ))
+          ) : (
+            navItems.map((item) => {
+              const Icon = item.icon
+              const isActive = pathname.startsWith(item.href)
+              return (
+                <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
+                  <Button
+                    variant="ghost"
+                    className={`w-full justify-start gap-3 text-white hover:bg-white/10 ${
+                      isActive ? "bg-white/20 text-white" : ""
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {item.label}
+                  </Button>
+                </Link>
+              )
+            })
+          )}
         </nav>
 
+        {/* Bouton de déconnexion (toujours présent) */}
         <div className="absolute bottom-4 left-4 right-4">
           <Button
             onClick={handleLogout}
             variant="ghost"
-            className="w-full justify-start gap-3 text-red-200 hover:bg-red-500/20 hover:text-red-100"
+            className="w-full justify-start bg-white gap-3 text-red-500 font-bold hover:bg-red-500/20 hover:text-red-100"
           >
             <LogOut className="w-4 h-4" />
             Déconnexion
@@ -161,7 +181,7 @@ export function Sidebar() {
         </div>
       </aside>
 
-      {/* Overlay on mobile */}
+      {/* Overlay pour mobile */}
       {isOpen && <div className="fixed inset-0 bg-black/50 z-20 lg:hidden" onClick={() => setIsOpen(false)} />}
     </>
   )

@@ -67,8 +67,8 @@ export default function EditOperationPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Modifier l&#39;opération</h1>
-              <p className="text-muted-foreground mt-1">Modifiez les détails de la transaction</p>
+              <h1 className="text-3xl font-bold text-blue-900">Modifier l&#39;opération</h1>
+              <p className="text-purple-700 mt-1">Modifiez les détails de la transaction</p>
             </div>
           </div>
 

@@ -2,11 +2,13 @@
 
 import { useAuthContext } from "@/contexts/auth-context"
 import { getPermissions } from "@/lib/auth/permissions"
+import type { UserRole } from "@/lib/auth/permissions"
 
 export function useAuth() {
-  const { user, loading, logout, isAuthenticated } = useAuthContext()
+  const { user, loading, logout, isAuthenticated, updateUser } = useAuthContext()
 
-  const permissions = user ? getPermissions(user.role) : null
+  // Retourne toujours un objet, même si user est null
+  const permissions = user ? getPermissions(user.role as UserRole) : {}
 
   return {
     user,
@@ -15,8 +17,9 @@ export function useAuth() {
     isAuthenticated,
     permissions,
     role: user?.role,
-    hasPermission: (permission: keyof typeof permissions) => {
-      if (!permissions) return false
+    updateUser,
+    hasPermission: (permission: string) => {
+      // @ts-expect-error – permissions est un objet avec les clés possibles
       return permissions[permission] || false
     },
   }

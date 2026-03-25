@@ -34,7 +34,7 @@ export function MemberForm({ initialData, onSubmit, isLoading }: MemberFormProps
     prenom: initialData?.user?.prenom || "",
     email: initialData?.user?.email || "",
     telephone: initialData?.user?.telephone || "",
-    date_naissance: initialData?.date_naissance || "",
+    date_naissance: initialData?.date_naissance ? initialData.date_naissance.split('T')[0] : "",
     adresse: initialData?.adresse || "",
     profession: initialData?.profession || "",
     statut: initialData?.statut || "actif",
@@ -49,27 +49,18 @@ export function MemberForm({ initialData, onSubmit, isLoading }: MemberFormProps
   return (
     <Card className="border-purple-200 shadow-md">
       <CardHeader className="bg-purple-50 border-b border-purple-200">
-        <CardTitle className="text-gray-900 font-bold">
+        <CardTitle className="text-blue-900 font-bold">
           {initialData ? "Modifier le membre" : "Nouveau membre"}
         </CardTitle>
-        <CardDescription className="text-gray-600">
+        <CardDescription className="text-purple-600">
           {initialData ? "Modifiez les informations du membre" : "Remplissez les informations pour créer un nouveau membre"}
         </CardDescription>
       </CardHeader>
-      <CardContent className="pt-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <CardContent className="pt-2">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="prenom" className="text-purple-700 font-medium">Prénom *</Label>
-              <Input
-                id="prenom"
-                value={formData.prenom}
-                onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
-                className="border-purple-200 focus:ring-purple-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="nom" className="text-purple-700 font-medium">Nom *</Label>
+              <Label htmlFor="nom" className="text-blue-700 font-medium">Nom *</Label>
               <Input
                 id="nom"
                 value={formData.nom}
@@ -77,11 +68,20 @@ export function MemberForm({ initialData, onSubmit, isLoading }: MemberFormProps
                 className="border-purple-200 focus:ring-purple-500"
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="prenom" className="text-blue-700 font-medium">Prénom *</Label>
+              <Input
+                id="prenom"
+                value={formData.prenom}
+                onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
+                className="border-purple-200 focus:ring-purple-500"
+              />
+            </div>           
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-purple-700 font-medium">Email *</Label>
+              <Label htmlFor="email" className="text-blue-700 font-medium">Email *</Label>
               <Input
                 id="email"
                 type="email"
@@ -91,7 +91,7 @@ export function MemberForm({ initialData, onSubmit, isLoading }: MemberFormProps
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="telephone" className="text-purple-700 font-medium">Téléphone</Label>
+              <Label htmlFor="telephone" className="text-blue-700 font-medium">Téléphone</Label>
               <Input
                 id="telephone"
                 value={formData.telephone}
@@ -103,7 +103,7 @@ export function MemberForm({ initialData, onSubmit, isLoading }: MemberFormProps
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="date_naissance" className="text-purple-700 font-medium">Date de naissance</Label>
+              <Label htmlFor="date_naissance" className="text-blue-700 font-medium">Date de naissance</Label>
               <Input
                 id="date_naissance"
                 type="date"
@@ -114,7 +114,7 @@ export function MemberForm({ initialData, onSubmit, isLoading }: MemberFormProps
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="profession" className="text-purple-700 font-medium">Profession</Label>
+              <Label htmlFor="profession" className="text-blue-700 font-medium">Profession</Label>
               <Input
                 id="profession"
                 value={formData.profession}
@@ -125,7 +125,7 @@ export function MemberForm({ initialData, onSubmit, isLoading }: MemberFormProps
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="situation_matrimoniale" className="text-purple-700 font-medium">Situation matrimoniale *</Label>
+            <Label htmlFor="situation_matrimoniale" className="text-blue-700 font-medium">Situation matrimoniale *</Label>
             <Select
               value={formData.situation_matrimoniale}
               onValueChange={(value) => setFormData({ ...formData, situation_matrimoniale: value })}
@@ -143,7 +143,7 @@ export function MemberForm({ initialData, onSubmit, isLoading }: MemberFormProps
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="adresse" className="text-purple-700 font-medium">Adresse</Label>
+            <Label htmlFor="adresse" className="text-blue-700 font-medium">Adresse</Label>
             <Textarea
               id="adresse"
               value={formData.adresse}
@@ -154,7 +154,7 @@ export function MemberForm({ initialData, onSubmit, isLoading }: MemberFormProps
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="statut" className="text-purple-700 font-medium">Statut</Label>
+            <Label htmlFor="statut" className="text-blue-700 font-medium">Statut</Label>
             <Select
               value={formData.statut}
               onValueChange={(value: Membre['statut']) => setFormData({ ...formData, statut: value })}
@@ -170,7 +170,7 @@ export function MemberForm({ initialData, onSubmit, isLoading }: MemberFormProps
             </Select>
           </div>
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-3 pt-2">
             <Button type="submit" disabled={isLoading} className="bg-green-600 hover:bg-green-700 text-white">
               {isLoading ? "Enregistrement..." : "Enregistrer"}
             </Button>

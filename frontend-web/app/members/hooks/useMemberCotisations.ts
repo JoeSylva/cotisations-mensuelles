@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { operationsAPI, typeOperationsAPI } from '@/lib/api';
-import type { Operation, TypeOperation } from '@/lib/types';
+import type { Operation} from '@/lib/types';
 
 export function useMemberCotisations(membreId: number | undefined) {
   const [cotisations, setCotisations] = useState<Operation[]>([]);

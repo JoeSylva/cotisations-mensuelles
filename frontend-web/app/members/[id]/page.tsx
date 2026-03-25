@@ -55,8 +55,8 @@ export default function EditMemberPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-purple-900">Modifier le membre</h1>
-              <p className="text-purple-700 mt-1">Modifiez les informations du membre</p>
+              <h1 className="text-3xl font-bold text-blue-900">Modifier le membre</h1>
+              <p className="text-purple-700 mt-1">Modifiez les informations</p>
             </div>
           </div>
 

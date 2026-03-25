@@ -212,15 +212,15 @@ export function OperationForm({ membres, typeOperations, operation, onSubmit }: 
   return (
     <Card className="border-purple-200 shadow-md flex flex-col max-h-full">
       <CardHeader className="bg-purple-50 border-b border-purple-200 flex-none">
-        <CardTitle className="text-purple-800">
+        <CardTitle className="text-blue-900">
           {operation ? "Modifier" : "Nouvelle"} Opération
         </CardTitle>
         <CardDescription className="text-purple-600">
           Enregistrez une transaction financière
         </CardDescription>
       </CardHeader>
-      <CardContent className="pt-6 overflow-y-auto">
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <CardContent className="pt-4 overflow-y-auto">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Ligne : Membre et Type d'opération */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div className="space-y-2">

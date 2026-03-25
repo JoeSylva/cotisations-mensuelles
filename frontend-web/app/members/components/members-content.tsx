@@ -44,8 +44,8 @@ export default function MembersContent() {
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Gestion des Membres</h1>
-              <p className="text-muted-foreground mt-1">Gérez tous les membres de votre association</p>
+              <h1 className="text-3xl font-bold text-blue-900">Gestion des Membres</h1>
+              <p className="text-muted-purple-700 mt-1">Gérez tous les membres de votre association</p>
             </div>
             <Link href="/members/new">
               <Button className="gap-2 bg-green-500 hover:bg-green-600 text-white">
@@ -58,11 +58,11 @@ export default function MembersContent() {
           {/* Search Bar */}
           <div className="mb-6 bg-white rounded-md">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-12 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Rechercher par nom, email..."
-                className="pl-10"
+                className="pl-10 h-12"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -84,9 +84,9 @@ export default function MembersContent() {
                       <th className="text-left p-3 font-semibold">Situation matrimoniale</th>
                       <th className="text-left p-3 font-semibold">Téléphone</th>
                       <th className="text-left p-3 font-semibold">Rôle</th>
-                      <th className="text-left p-3 font-semibold">Statut</th>
+                      <th className="text-left p-3 font-semibold">Date de naissance</th>
                       <th className="text-left p-3 font-semibold">Adhésion</th>
-                      <th className="text-left p-3 font-semibold">Actions</th>
+                      <th className="text-center p-3 font-semibold">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="bg-purple-200">
@@ -102,13 +102,14 @@ export default function MembersContent() {
                             {member.user?.role === 'admin' ? 'Admin' : 'Membre'}
                           </span>
                         </td>
-                        <td className="p-3">
+                        <td className="p-3">{member.date_naissance ?formatDate(member.date_naissance):"N/A"}</td>
+                        {/* <td className="p-3">
                           <span className={`px-2 py-1 rounded-full text-xs ${
                             member.statut === 'actif' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
                           }`}>
                             {member.statut}
                           </span>
-                        </td>
+                        </td> */}
                         <td className="p-3 text-muted-foreground">{formatDate(member.date_adhesion)}</td>
                         <td className="p-3">
                           <div className="flex gap-2">

@@ -1,4 +1,4 @@
-import type { Membre, Operation, SuiviCotisation, TypeOperation } from './types';
+import type { DashboardStats, Membre, Operation, SuiviCotisation, TypeOperation, User } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
@@ -94,3 +94,30 @@ export const cotisationsAPI = {
     return fetchAPI<SuiviCotisation>(`/cotisations${query}`);
   },
 };
+
+export const dashboardAPI = {
+  getStats: () => fetchAPI<{
+    solde_total: number;
+    nombre_membres: number;
+    stats_categories: Array<{ categorie: string; type: string; total: number }>;
+    dernieres_operations: Operation[];
+    periode: { debut: string; fin: string };
+  }>('/dashboard/statistiques'),
+  getSolde: () => fetchAPI<{ solde: number }>('/dashboard/solde'),
+  getMonthlyEvolution: (year?: number) => {
+    const params = year ? `?year=${year}` : '';
+    return fetchAPI<Array<{ month: string; revenus: number; depenses: number }>>(`/dashboard/monthly-evolution${params}`);
+  },
+};
+
+export const userAPI = {
+  updateProfile: (data: { nom: string; prenom: string; email: string; telephone?: string }) =>
+    fetchAPI<User>('/user', { method: 'PUT', body: JSON.stringify(data) }),
+  changePassword: (data: { current_password: string; new_password: string; new_password_confirmation: string }) =>
+    fetchAPI<{ message: string }>('/user/change-password', { method: 'POST', body: JSON.stringify(data) }),
+};
+// export const dashboardAPI = {
+//   getStats: () => fetchAPI<DashboardStats>('/dashboard/statistiques'),
+//   getSolde: () => fetchAPI<{ solde: number }>('/dashboard/solde'),
+// };
+

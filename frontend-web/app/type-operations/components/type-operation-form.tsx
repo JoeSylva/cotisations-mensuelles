@@ -33,10 +33,10 @@ export function TypeOperationForm({ initialData, onSubmit, isLoading }: TypeOper
   return (
     <Card className="border-purple-200 shadow-md">
       <CardHeader className="bg-purple-50 border-b border-purple-200">
-        <CardTitle className="text-purple-800">
+        <CardTitle className="text-blue-900">
           {initialData ? "Modifier le type" : "Nouveau type d'opération"}
         </CardTitle>
-        <CardDescription className="text-purple-600">
+        <CardDescription className="text-blue-600">
           {initialData
             ? "Modifiez les informations du type d'opération"
             : "Créez un nouveau type d'opération pour les transactions"}
@@ -45,7 +45,7 @@ export function TypeOperationForm({ initialData, onSubmit, isLoading }: TypeOper
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="nom" className="text-purple-700 font-medium">Nom *</Label>
+            <Label htmlFor="nom" className="text-blue-700 font-medium">Nom *</Label>
             <Input
               id="nom"
               value={formData.nom}
@@ -56,7 +56,7 @@ export function TypeOperationForm({ initialData, onSubmit, isLoading }: TypeOper
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-purple-700 font-medium">Description</Label>
+            <Label htmlFor="description" className="text-blue-700 font-medium">Description</Label>
             <Textarea
               id="description"
               value={formData.description}
@@ -68,7 +68,7 @@ export function TypeOperationForm({ initialData, onSubmit, isLoading }: TypeOper
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="categorie" className="text-purple-700 font-medium">Catégorie *</Label>
+              <Label htmlFor="categorie" className="text-blue-700 font-medium">Catégorie *</Label>
               <Select
                 value={formData.categorie}
                 onValueChange={(value: TypeOperation['categorie']) => setFormData({ ...formData, categorie: value })}
@@ -86,7 +86,7 @@ export function TypeOperationForm({ initialData, onSubmit, isLoading }: TypeOper
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="type" className="text-purple-700 font-medium">Type *</Label>
+              <Label htmlFor="type" className="text-blue-700 font-medium">Type *</Label>
               <Select
                 value={formData.type}
                 onValueChange={(value: TypeOperation['type']) => setFormData({ ...formData, type: value })}

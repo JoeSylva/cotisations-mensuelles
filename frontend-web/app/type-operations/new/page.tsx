@@ -33,8 +33,8 @@ export default function NewTypeOperationPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-purple-900">Nouveau type d&#39;opération</h1>
-              <p className="text-purple-700 mt-1">Créez un nouveau type pour les transactions</p>
+              <h1 className="text-3xl font-bold text-blue-900">Nouveau type d&#39;opération</h1>
+              <p className="text-blue-700 mt-1">Créez un nouveau type pour les transactions</p>
             </div>
           </div>
 

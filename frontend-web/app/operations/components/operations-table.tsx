@@ -34,14 +34,14 @@ export function OperationsTable({ operations, onView, onEdit, onDelete }: Operat
       <Table>
         <TableHeader>
           <TableRow className="border-purple-200">
-            <TableHead className="text-gray-700">Membre</TableHead>
-            <TableHead className="text-gray-700">Type</TableHead>
-            <TableHead className="text-gray-700">Catégorie</TableHead>
-            <TableHead className="text-right text-gray-700">Montant</TableHead>
-            <TableHead className="text-gray-700">Date</TableHead>
-            <TableHead className="text-gray-700">Mode</TableHead>
-            <TableHead className="text-gray-700">Statut</TableHead>
-            <TableHead className="text-gray-700">Actions</TableHead>
+            <TableHead className="text-blue-900">Membre</TableHead>
+            <TableHead className="text-blue-900">Type</TableHead>
+            <TableHead className="text-blue-900">Catégorie</TableHead>
+            <TableHead className="text-right text-blue-900">Montant</TableHead>
+            <TableHead className="text-blue-900">Date</TableHead>
+            <TableHead className="text-blue-900">Mode</TableHead>
+            <TableHead className="text-blue-900">Statut</TableHead>
+            <TableHead className="text-blue-900">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="bg-purple-200">

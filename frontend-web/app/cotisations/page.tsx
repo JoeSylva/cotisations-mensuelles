@@ -135,13 +135,13 @@ export default function CotisationsPage() {
       <main className="flex-1 overflow-auto lg:ml-64 bg-purple-100">
         <div className="p-6 lg:p-8">
           {/* Titre */}
-          <h1 className="text-3xl font-bold text-purple-900 mb-6">Suivi des cotisations</h1>
+          <h1 className="text-3xl font-bold text-blue-900 mb-6">Suivi des cotisations</h1>
 
-          {/* Filtres - placés verticalement sous le titre */}
+          {/* Filtres */}
           <div className="mb-6 bg-white p-4 rounded-lg shadow-sm border border-purple-200">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
               <div className="space-y-1">
-                <Label className="text-purple-700">Filtrer par année</Label>
+                <Label className="text-blue-900">Filtrer par année</Label>
                 <Select value={filters.annee} onValueChange={handleYearFilter}>
                   <SelectTrigger className="w-full border-purple-200 focus:ring-purple-500">
                     <SelectValue placeholder="Toutes" />
@@ -156,7 +156,7 @@ export default function CotisationsPage() {
               </div>
               <form onSubmit={handleCustomRange} className="flex gap-2 col-span-2 items-end">
                 <div className="space-y-1 flex-1">
-                  <Label className="text-purple-700">Début</Label>
+                  <Label className="text-blue-900">Début</Label>
                   <Input
                     type="month"
                     value={filters.debut}
@@ -165,7 +165,7 @@ export default function CotisationsPage() {
                   />
                 </div>
                 <div className="space-y-1 flex-1">
-                  <Label className="text-purple-700">Fin</Label>
+                  <Label className="text-blue-900">Fin</Label>
                   <Input
                     type="month"
                     value={filters.fin}
@@ -205,7 +205,7 @@ export default function CotisationsPage() {
           ) : !data ? null : (
             <Card className="border-purple-200 shadow-md">
               <CardHeader className="bg-purple-50 border-b border-purple-200">
-                <CardTitle className="text-gray-900">État des cotisations par mois</CardTitle>
+                <CardTitle className="text-blue-900 font-bold">État des cotisations par mois</CardTitle>
                 <CardDescription className="text-gray-500">
                   Période du {data.mois[0]} au {data.mois[data.mois.length - 1]}
                 </CardDescription>
@@ -215,7 +215,7 @@ export default function CotisationsPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-purple-200">
-                        <th className="text-left p-2 text-purple-700">Membre</th>
+                        <th className="text-left p-2 text-gray-900">Membre</th>
                         {data.mois.map(m => (
                           <th key={m} className="text-center p-2 text-purple-700">{m}</th>
                         ))}

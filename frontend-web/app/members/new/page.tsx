@@ -33,7 +33,7 @@ export default function NewMemberPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-purple-900">Nouveau membre</h1>
+              <h1 className="text-3xl font-bold text-blue-900">Nouveau membre</h1>
               <p className="text-purple-700 mt-1">Ajoutez un nouveau membre à l&#39;association</p>
             </div>
           </div>

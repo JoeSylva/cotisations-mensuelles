@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useEffect, useState } from "react"
+import React, { createContext, useContext, useState } from "react"
 import { useRouter } from "next/navigation"
 
 export interface User {
@@ -21,34 +21,30 @@ interface AuthContextType {
   isAuthenticated: boolean
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
+  updateUser: (user: User) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [token, setToken] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
-  const router = useRouter()
-
-  useEffect(() => {
-    // Restaurer la session depuis localStorage
-    const storedToken = localStorage.getItem("token")
+  const [token, setToken] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null
+    return localStorage.getItem("token")
+  })
+  const [user, setUser] = useState<User | null>(() => {
+    if (typeof window === "undefined") return null
     const storedUser = localStorage.getItem("user")
-    if (storedToken && storedUser) {
+    if (storedUser) {
       try {
-        // Désactiver l'avertissement car c'est l'initialisation unique
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setToken(storedToken)
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setUser(JSON.parse(storedUser))
-      } catch (e) {
-        localStorage.removeItem("token")
-        localStorage.removeItem("user")
+        return JSON.parse(storedUser)
+      } catch {
+        return null
       }
     }
-    setLoading(false)
-  }, [])
+    return null
+  })
+  const [loading] = useState(false) // Pas de chargement asynchrone initial
+  const router = useRouter()
 
   const login = async (email: string, password: string) => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
@@ -84,6 +80,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.push("/login")
   }
 
+  const updateUser = (updatedUser: User) => {
+    setUser(updatedUser)
+    localStorage.setItem("user", JSON.stringify(updatedUser))
+  }
+
   const value = {
     user,
     token,
@@ -91,6 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isAuthenticated: !!user,
     login,
     logout,
+    updateUser,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

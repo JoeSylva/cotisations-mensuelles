@@ -129,7 +129,7 @@ export default function OperationsPage() {
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-purple-900">Registre des Opérations</h1>
+              <h1 className="text-3xl font-bold text-blue-900">Registre des Opérations</h1>
               <p className="text-purple-700 mt-1">Suivi de toutes les transactions financières</p>
             </div>
             <div className="flex gap-2">
@@ -206,7 +206,7 @@ export default function OperationsPage() {
           {/* Tableau des opérations */}
           <Card className="border-purple-200 shadow-md">
             <CardHeader className="bg-purple-50 border-b border-purple-200">
-              <CardTitle className="text-gray-900 font-bold">Opérations</CardTitle>
+              <CardTitle className="text-blue-900 font-bold">Opérations</CardTitle>
               <CardDescription className="text-purple-600">
                 {filteredOperations.length} opération(s) trouvée(s)
               </CardDescription>

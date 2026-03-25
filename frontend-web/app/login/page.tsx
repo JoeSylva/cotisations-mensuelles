@@ -5,9 +5,10 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Lock, Mail } from "lucide-react"
 import { useAuthContext } from "@/contexts/auth-context"
+import Image from "next/image"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -39,22 +40,25 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo/Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-green-500 text-primary-foreground mb-4">
-            <Lock className="w-6 h-6" />
-          </div>
-          <h1 className="text-2xl font-bold text-foreground">Connexion</h1>
-          <p className="text-muted-foreground mt-1">Gestion de trésorerie</p>
-        </div>
+        {/* Carte avec ombre et sans bordure */}
+        <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-xl">
+          <CardContent className="pt-6">
+            {/* Logo et titres centrés */}
+            <div className="text-center mb-6">
+              <div className="w-28 h-28 rounded-full bg-white/10 flex items-center justify-center overflow-hidden mx-auto">
+                <Image
+                  src="/rakotomalala_logo.png"
+                  alt="Logo Rakotomalala"
+                  width={100}
+                  height={100}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+              <h1 className="text-2xl font-bold text-foreground mt-4">Connexion</h1>
+              <p className="text-muted-foreground mt-1">Gestion de trésorerie</p>
+            </div>
 
-        {/* Login Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Connexion</CardTitle>
-            <CardDescription>Entrez vos identifiants pour accéder à votre compte</CardDescription>
-          </CardHeader>
-          <CardContent>
+            {/* Formulaire */}
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
                 <div className="p-3 text-sm bg-red-100 border border-red-200 text-red-600 rounded">

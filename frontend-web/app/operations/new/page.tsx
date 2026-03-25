@@ -60,8 +60,8 @@ export default function NewOperationPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Nouvelle opération</h1>
-              <p className="text-muted-foreground mt-1">Enregistrez une nouvelle transaction</p>
+              <h1 className="text-3xl font-bold text-blue-900">Nouvelle opération</h1>
+              <p className="text-purple-700 mt-1">Enregistrez une nouvelle transaction</p>
             </div>
           </div>
 

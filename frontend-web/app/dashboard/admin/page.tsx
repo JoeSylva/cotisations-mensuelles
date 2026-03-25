@@ -13,33 +13,79 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  BarChart,
-  Bar,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts"
-import { Users, DollarSign, TrendingUp, AlertCircle, Settings } from "lucide-react"
+import { Users, DollarSign, TrendingUp, Calendar } from "lucide-react"
+import { useDashboardStats } from "./hooks/useDashboardStats"
+import { useMonthlyEvolution } from "./hooks/useMonthlyEvolution"
+import { formatCurrency } from "@/lib/utils"
+import { useMemo, useState } from "react"
 
-const monthlyData = [
-  { month: "Jan", revenus: 4000, depenses: 2400 },
-  { month: "Fév", revenus: 5200, depenses: 2800 },
-  { month: "Mar", revenus: 4800, depenses: 3000 },
-  { month: "Avr", revenus: 6200, depenses: 3200 },
-  { month: "Mai", revenus: 5800, depenses: 2900 },
-  { month: "Jun", revenus: 7100, depenses: 3500 },
-]
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const operationsData = [
-  { name: "Cotisations", value: 12500, color: "#2563eb" },
-  { name: "Dons", value: 3200, color: "#16a34a" },
-  { name: "Dépenses", value: -8900, color: "#dc2626" },
-]
-
-const memberStats = [
-  { role: "Admin", count: 2 },
-  { role: "Trésorier", count: 1 },
-  { role: "Membre", count: 245 },
-]
+const COLORS = {
+  cotisation: "#2563eb",
+  don: "#16a34a",
+  depense: "#dc2626",
+  autres: "#f59e0b",
+}
 
 export default function AdminDashboard() {
+  const currentYear = new Date().getFullYear()
+  const [selectedYear, setSelectedYear] = useState(currentYear)
+
+  const { stats, loading: statsLoading, error: statsError } = useDashboardStats()
+  const { data: monthlyData, loading: monthlyLoading, error: monthlyError } = useMonthlyEvolution(selectedYear)
+
+  const kpis = useMemo(() => {
+    if (!stats) return null
+    const revenus = stats.stats_categories
+      .filter(cat => cat.sens === "credit")
+      .reduce((sum, cat) => sum + cat.total, 0)
+    const depenses = stats.stats_categories
+      .filter(cat => cat.sens === "debit")
+      .reduce((sum, cat) => sum + cat.total, 0)
+    return {
+      totalMembres: stats.nombre_membres,
+      solde: stats.solde_total,
+      revenusMois: revenus,
+      depensesMois: depenses,
+    }
+  }, [stats])
+
+  const pieData = useMemo(() => {
+    if (!stats) return []
+    return stats.stats_categories
+      .filter(cat => cat.total > 0)
+      .map(cat => ({
+        name: cat.categorie === "cotisation" ? "Cotisations"
+          : cat.categorie === "don" ? "Dons"
+          : cat.categorie === "depense" ? "Dépenses"
+          : "Autres",
+        value: cat.total,
+        color: COLORS[cat.categorie as keyof typeof COLORS] || "#9ca3af",
+      }))
+  }, [stats])
+
+  const loading = statsLoading || monthlyLoading
+  const error = statsError || monthlyError
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <p className="text-red-600">Erreur : {error}</p>
+      </div>
+    )
+  }
+
   return (
     <ProtectedRoute requiredPermission="canManageUsers">
       <div className="flex h-screen bg-background">
@@ -47,7 +93,6 @@ export default function AdminDashboard() {
 
         <main className="flex-1 overflow-auto lg:ml-64">
           <div className="p-6 lg:p-8">
-            {/* Header */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-foreground">Tableau de bord Administrateur</h1>
               <p className="text-muted-foreground mt-1">Vue d&#39;ensemble complète du système</p>
@@ -61,23 +106,23 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-end justify-between">
-                    <div className="text-2xl font-bold">248</div>
+                    <div className="text-2xl font-bold">{kpis?.totalMembres ?? 0}</div>
                     <Users className="w-8 h-8 text-primary/50" />
                   </div>
-                  <p className="text-xs text-green-600 mt-2">+12 ce mois</p>
+                  <p className="text-xs text-green-600 mt-2">Membres actifs</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Solde Général</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Solde</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-end justify-between">
-                    <div className="text-2xl font-bold">45,200 €</div>
+                    <div className="text-2xl font-bold">{formatCurrency(kpis?.solde ?? 0)}</div>
                     <DollarSign className="w-8 h-8 text-accent/50" />
                   </div>
-                  <p className="text-xs text-green-600 mt-2">+8.2% depuis le mois dernier</p>
+                  <p className="text-xs text-green-600 mt-2">Solde actuel</p>
                 </CardContent>
               </Card>
 
@@ -87,23 +132,31 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-end justify-between">
-                    <div className="text-2xl font-bold">7,100 €</div>
+                    <div className="text-2xl font-bold">{formatCurrency(kpis?.revenusMois ?? 0)}</div>
                     <TrendingUp className="w-8 h-8 text-green-600/50" />
                   </div>
-                  <p className="text-xs text-green-600 mt-2">+15.3% vs avril</p>
+                  <p className="text-xs text-green-600 mt-2">
+                    {stats?.periode.debut && stats?.periode.fin
+                      ? `du ${new Date(stats.periode.debut).toLocaleDateString('fr-FR')} au ${new Date(stats.periode.fin).toLocaleDateString('fr-FR')}`
+                      : 'Période en cours'}
+                  </p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Alertes Système</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Dépenses Mois</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-end justify-between">
-                    <div className="text-2xl font-bold">2</div>
-                    <AlertCircle className="w-8 h-8 text-destructive/50" />
+                    <div className="text-2xl font-bold">{formatCurrency(kpis?.depensesMois ?? 0)}</div>
+                    <Calendar className="w-8 h-8 text-destructive/50" />
                   </div>
-                  <p className="text-xs text-red-600 mt-2">À traiter</p>
+                  <p className="text-xs text-red-600 mt-2">
+                    {stats?.periode.debut && stats?.periode.fin
+                      ? `du ${new Date(stats.periode.debut).toLocaleDateString('fr-FR')} au ${new Date(stats.periode.fin).toLocaleDateString('fr-FR')}`
+                      : 'Période en cours'}
+                  </p>
                 </CardContent>
               </Card>
             </div>
@@ -112,8 +165,21 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
               <Card className="lg:col-span-2">
                 <CardHeader>
-                  <CardTitle>Revenus vs Dépenses</CardTitle>
-                  <CardDescription>Évolution sur les 6 derniers mois</CardDescription>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Revenus vs Dépenses</CardTitle>
+                      <CardDescription>Évolution mensuelle</CardDescription>
+                    </div>
+                    <select
+                      value={selectedYear}
+                      onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                      className="border rounded p-1 text-sm"
+                    >
+                      {[2024, 2025, 2026].map(year => (
+                        <option key={year} value={year}>{year}</option>
+                      ))}
+                    </select>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -121,7 +187,7 @@ export default function AdminDashboard() {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
                       <YAxis />
-                      <Tooltip />
+                      <Tooltip formatter={(value) => formatCurrency(value as number)} />
                       <Legend />
                       <Line type="monotone" dataKey="revenus" stroke="#2563eb" strokeWidth={2} />
                       <Line type="monotone" dataKey="depenses" stroke="#dc2626" strokeWidth={2} />
@@ -132,41 +198,70 @@ export default function AdminDashboard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Répartition par Rôle</CardTitle>
+                  <CardTitle>Répartition des Opérations</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={memberStats}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="role" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="count" fill="#2563eb" />
-                    </BarChart>
-                  </ResponsiveContainer>
+                  {pieData.length === 0 ? (
+                    <p className="text-center text-gray-500 py-4">Aucune donnée disponible</p>
+                  ) : (
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={pieData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
+                          outerRadius={100}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {pieData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  )}
                 </CardContent>
               </Card>
             </div>
 
-            {/* Admin Actions */}
+            {/* Recent Operations */}
             <Card>
               <CardHeader>
-                <CardTitle>Actions Administrateur</CardTitle>
-                <CardDescription>Gestion du système</CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Opérations Récentes</CardTitle>
+                    <CardDescription>Les 10 dernières transactions</CardDescription>
+                  </div>
+                  <Button variant="outline" size="sm">
+                    Voir tout
+                  </Button>
+                </div>
               </CardHeader>
-              <CardContent className="flex gap-2 flex-wrap">
-                <Button variant="outline" size="sm">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Paramètres Système
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Users className="w-4 h-4 mr-2" />
-                  Gérer les Utilisateurs
-                </Button>
-                <Button variant="outline" size="sm">
-                  <AlertCircle className="w-4 h-4 mr-2" />
-                  Voir les Alertes
-                </Button>
+              <CardContent>
+                <div className="space-y-3">
+                  {stats?.dernieres_operations?.slice(0, 5).map((op) => (
+                    <div key={op.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                      <div>
+                        <p className="font-medium">
+                          {op.membre?.user?.prenom} {op.membre?.user?.nom}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {op.type_operation?.nom} • {new Date(op.date_operation).toLocaleDateString('fr-FR')}
+                        </p>
+                      </div>
+                      <span className={`font-bold ${op.type_operation?.type === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
+                        {formatCurrency(op.montant)}
+                      </span>
+                    </div>
+                  ))}
+                  {(!stats?.dernieres_operations || stats.dernieres_operations.length === 0) && (
+                    <p className="text-center text-gray-500 py-4">Aucune opération récente</p>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </div>

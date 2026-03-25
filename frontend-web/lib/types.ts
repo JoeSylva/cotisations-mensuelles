@@ -63,16 +63,18 @@ export interface Operation {
 }
 
 export interface DashboardStats {
-  total_membres: number
-  membres_actifs: number
-  total_cotisations: number
-  total_depenses: number
-  solde_general: number
-  derniers_mois: {
-    mois: string
-    revenus: number
-    depenses: number
-  }[]
+  solde_total: number;
+  nombre_membres: number;
+  stats_categories: Array<{
+    categorie: string;
+    sens: 'credit' | 'debit';
+    total: number;
+  }>;
+  dernieres_operations: Operation[];
+  periode: {
+    debut: string;
+    fin: string;
+  };
 }
 
 export interface SuiviMembre {
