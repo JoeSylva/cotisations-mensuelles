@@ -78,4 +78,46 @@ class AuthController extends Controller
     {
         return response()->json($request->user()->load('membre'));
     }
+
+     public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $validator = validator($request->all(), [
+            'nom' => 'sometimes|string|max:100',
+            'prenom' => 'sometimes|string|max:100',
+            'email' => 'sometimes|email|unique:users,email,' . $user->id,
+            'telephone' => 'nullable|string|max:20',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user->update($request->only(['nom', 'prenom', 'email', 'telephone']));
+
+        return response()->json($user->load('membre'));
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:8|confirmed',
+        ]);
+
+        $user = $request->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => ['Le mot de passe actuel est incorrect.'],
+            ]);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+
+        return response()->json(['message' => 'Mot de passe modifié avec succès.']);
+    }
 }

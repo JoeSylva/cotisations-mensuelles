@@ -12,8 +12,8 @@ class TypeOperation extends Model
     protected $fillable = [
         'nom',
         'description',
-        'categorie',
-        'type',
+        'categorie',// cotisation - don - depense - autres
+        'type', // credit - debit
     ];
 
     // Relations

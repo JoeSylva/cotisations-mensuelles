@@ -17,9 +17,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
     Route::get('/cotisations', [CotisationController::class, 'suivi']);
+    Route::put('/user', [AuthController::class, 'updateProfile']);
+    Route::post('/user/change-password', [AuthController::class, 'changePassword']);
     
     // Dashboard
     Route::get('/dashboard/statistiques', [DashboardController::class, 'statistiques']);
+    Route::get('/dashboard/monthly-evolution', [DashboardController::class, 'monthlyEvolution']);
     Route::get('/dashboard/solde', [DashboardController::class, 'solde']);
 
     // Membres

@@ -92,7 +92,7 @@ class MembreController extends Controller
         $validator = validator($data, [
             'nom' => 'nullable|string|max:100',
             'prenom' => 'nullable|string|max:100',
-            'email' => 'sometimes|email|unique:users,email,' . $membre->user_id,
+            'email' => 'nullable|email|unique:users,email,' . $membre->user_id,
             'telephone' => 'nullable|string|max:20',
             'date_naissance' => 'nullable|date',
             'situation_matrimoniale' => 'sometimes|string|in:célibataire,marié,divorcé,veuf',
@@ -120,14 +120,10 @@ class MembreController extends Controller
     }
 
     public function me(Request $request)
-{
-    $user = $request->user();
-    $membre = Membre::where('user_id', $user->id)->with('user')->first();
+    {
+        $user = $request->user();
+        $membre = Membre::where('user_id', $user->id)->with('user')->first();
 
-    if (!$membre) {
-        return response()->json(['message' => 'Membre non trouvé'], 404);
+        return response()->json($membre); // null si non trouvé
     }
-
-    return response()->json($membre);
-}
 }
